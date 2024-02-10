@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <title>catcommune</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    </head>
+    
+    <body>
+        <img src="https://www.seekpng.com/png/full/328-3289174_trans-pride-flag-pixel-car-transparent.png" style="width:48px;height:48px;">
+        <img src="https://cdn.discordapp.com/attachments/822498013989437500/1132028529484242986/nb_flag_pixel_large.png" style="width:48px;height:48px;">
+        <img src="https://www.seekpng.com/png/full/931-9313170_bi-pride-flag-falco-lombardi-gif-pixel.png" style="width:48px;height:48px;">
+        <p>Logged In: {{ logged_in }} as {{ username }}</p>
+        <h1>catcommune</h1>
+        <h3>primitive social media</h3>
+        <p>no login required. posting is literally creating a text file.</p>
+        <h4>how does it work?</h4>
+        <p>ok i may have given in and added accounts but you can still talk anonymously<br>
+        just press 'register' to make an account and stuff</p><br><br>
+        <a href="https://catcommune.jort57.repl.co/post">Post Something</a><br><br>
+        <a href="https://catcommune.jort57.repl.co/register">Register</a><br>
+        <a href="https://catcommune.jort57.repl.co/login">Login</a><br>
+        <a href="https://catcommune.jort57.repl.co/logout">Logout</a><br>
+
+        <h4>active posts:</h4>
+        {%for i in aposts%}
+            <a href={{i["posturl"]}}>{{i["author"]}}: '{{i["topic"]}}' ({{i["posted"]}}, {{i["id"]}})</a><br><br>
+        {%endfor%}
+
+        <br><br><br><br>
+        
+        <h4>recent posts:</h4>
+
+        {%for i in posts%}
+            <a href={{i["posturl"]}}>{{i["author"]}}: '{{i["topic"]}}' ({{i["posted"]}}, {{i["id"]}})</a><br><br>
+        {%endfor%}
+    </body>
+</html>
+

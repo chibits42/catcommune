@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{{ postid }}</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    </head>
+    
+    <body>
+        <a href="https://catcommune.jort57.repl.co">Home</a>
+
+        <pre>{{ content }}</pre>
+
+        <form method="post">
+
+            <label for="nickname">Post:</label><br>
+            <textarea name="post" cols="40" rows="5">{{ request.form["post"] }}</textarea><br>
+            <input type="submit"><br>
+        </form>
+    </body>
+</html>
+

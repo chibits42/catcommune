@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+    <head>
+        <title>catcommune</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    </head>
+    
+    <body>
+        <form  method = "POST">
+             <h3>set ur nickname</h3>
+            <input type="text" name="nick" value="{{ request.form['nick'] }}">
+             <input type="submit"><br>
+        </form>
+    </body>
+</html>

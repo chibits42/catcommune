@@ -1,0 +1,116 @@
+from replit import db
+import hashlib
+from flask import Flask, request, render_template, send_file, redirect, url_for, make_response
+import time
+
+app = Flask(__name__)
+
+# db["accounts"] = []
+
+# db["posts"] = []
+
+def register(username, password):
+    acc = {
+        "username": username,
+        "passwd": hashlib.sha512(password.encode()).hexdigest()
+    }
+
+    db["accounts"].append(acc)
+
+    return acc
+
+def post(nickname, nickIP, title, post):
+
+    _time = time.time()
+
+    nickid = hashlib.sha256((nickIP).encode()).hexdigest()[:10]
+    postid = f"{nickname}.{nickid}.{title}.{post}.{_time}".encode()
+
+    posttuple = (hashlib.sha256(postid).hexdigest(), title, str(_time), f"https://catcommune.jort57.repl.co/render/{hashlib.sha256(postid).hexdigest()}", nickname)
+
+    db["posts"].insert(0, posttuple)
+
+    post = post.replace("\n", "\n\t")
+
+    with open(f"posts/{hashlib.sha256(postid).hexdigest()}.txt", "w") as f:
+        f.write(
+            f"[{hashlib.sha256(postid).hexdigest()}]\n'{title}'\n-----------------------------\n\n{nickname} ({nickid}):\n\t{post}\n\n-----------------------------"
+        )
+
+    return hashlib.sha256(postid).hexdigest()
+
+
+def append(postid, nick, nickIP, post):
+    post = post.replace("\n", "\n\t")
+    nickid = hashlib.sha256((nickIP).encode()).hexdigest()[:10]
+    postfmt = f"\n\n{nick} ({nickid}):\n\t{post}\n\n-----------------------------"
+
+    with open(f"posts/{postid}.txt", "a") as f:
+        f.write(postfmt)
+
+
+@app.route('/')
+def index():
+    return render_template("home.html", posts=db["posts"])
+
+
+@app.route('/post', methods=("GET", "POST"))
+def serv_post():
+    if request.method == 'POST':
+        nick = str(request.cookies.get('nick'))
+        id = post(nick, str(request.remote_addr),
+                  request.form["title"], request.form["post"])
+
+        return redirect(url_for('render_post', postid=id))
+
+    return render_template('postform.html')
+
+
+@app.route('/render/<postid>', methods=("GET", "POST"))
+def render_post(postid):
+    id = postid
+    with open(f"posts/{postid}.txt", 'r') as f:
+        post = f.read()
+
+    if request.method == 'POST':
+        if request.cookies.get('logged_in') == True:
+            nick = 
+        nick = str(request.cookies.get('nick'))
+        print(nick)
+        append(postid, nick, str(request.remote_addr),
+               request.form["post"])
+        
+        return redirect(url_for('render_post', postid=id))
+
+    return render_template("render.html", postid=postid, content=post)
+
+
+@app.route("/setnick", methods=("GET", "POST"))
+def setnick():
+    if request.method == 'POST':
+        resp = make_response(render_template("setnicksuccess.html")) 
+        print(request.form["nick"])
+        resp.set_cookie('nick', str(request.form["nick"]))
+        return resp
+        
+    return render_template("setnick.html")
+
+@app.route("/register")
+def register():
+    if request.method == 'POST':
+        resp = make_response(render_template("registersuccess.html"))
+        
+        for i in db["accounts"]:
+            if str(request.form["username"]) == i["username"]:
+                return 'could not make account: username already in use'
+
+        register(str(request.form["username"]), str(request.form["password"]))
+        resp.set_cookie('username', str(request.form["username"]))
+        resp.set_cookie('password', str(hashlib.sha512(request.form["password"].encode()).hexdigest()))
+        resp.set_cookie('logged_in', True)
+        return resp
+    
+    return render_template("register.html")
+
+
+app.run(host='0.0.0.0', port=81)

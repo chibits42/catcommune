@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <title>catcommune</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+    </head>
+    
+    <body>
+        <h1>Register a CatCommune account</h1>
+        <form method="post">
+            <label >Username: </label>
+            <input type="text" name="username" value="{{ request.form['username'] }}"><br>
+            <label>Password: </label>
+            <input type="password" name="password" value="{{ request.form['password'] }}"><br>
+            <input type="submit"><br>
+        </form>
+        <a href="https://catcommune.jort57.repl.co">Home</a>
+    </body>
+</html>
